@@ -1,7 +1,12 @@
 #[cfg(test)]
-mod tests {
-    #[test]
-    fn it_works() {
-        assert_eq!(2 + 2, 4);
-    }
-}
+#[macro_use]
+extern crate lazy_static;
+
+pub use decode::decode_utf8;
+pub use encode::encode_utf8;
+
+mod encode;
+mod decode;
+
+#[cfg(test)]
+mod tests;
