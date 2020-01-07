@@ -1,7 +1,7 @@
 use std::fs::{File, read_dir};
 use std::io::Read;
 
-use crate::{decode_utf8, encode_utf8};
+use crate::{decode_utf8, encode_utf8, EncodeUtf8Error};
 
 lazy_static! {
     static ref TEST_TEXTS: Vec<(String, Vec<char>)> = collect_test_texts();
@@ -31,6 +31,19 @@ fn test_encode() {
     for (text, chars) in TEST_TEXTS.iter() {
         assert_eq!(encode_utf8(&chars).unwrap(), text.as_bytes());
     }
+}
+
+#[test]
+fn test_encode_error() {
+    let mut src = vec!['a', 'b', 'c'];
+    let invalid_char = unsafe {
+        std::mem::transmute::<u32, char>(1 << 21)
+    };
+    src.push(invalid_char);
+
+    let output = encode_utf8(&src);
+    assert!(output.is_err());
+    assert_eq!(output.unwrap_err().index, 3);
 }
 
 #[test]
