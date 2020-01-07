@@ -1,7 +1,7 @@
 use std::fs::{File, read_dir};
 use std::io::Read;
 
-use crate::{decode_utf8, encode_utf8, EncodeUtf8Error};
+use crate::{decode_utf8, encode_utf8};
 
 lazy_static! {
     static ref TEST_TEXTS: Vec<(String, Vec<char>)> = collect_test_texts();
@@ -17,7 +17,7 @@ fn collect_test_texts() -> Vec<(String, Vec<char>)> {
         if file.file_type().expect("get file type").is_file() {
             let mut file = File::open(file.path()).expect("open test file");
             let mut buffer = String::new();
-            file.read_to_string(&mut buffer);
+            file.read_to_string(&mut buffer).expect("read test file");
 
             let chars: Vec<char> = buffer.chars().collect();
             result.push((buffer, chars));
@@ -36,9 +36,7 @@ fn test_encode() {
 #[test]
 fn test_encode_error() {
     let mut src = vec!['a', 'b', 'c'];
-    let invalid_char = unsafe {
-        std::mem::transmute::<u32, char>(1 << 21)
-    };
+    let invalid_char = unsafe { std::mem::transmute::<u32, char>(1 << 21) };
     src.push(invalid_char);
 
     let output = encode_utf8(&src);
@@ -59,5 +57,7 @@ fn test_decode_error() {
     src.remove(0);
 
     let output = decode_utf8(&src);
-    assert_eq!(output.unwrap_err(), 0);
+    assert!(output.is_err());
+    let error = output.unwrap_err();
+    assert_eq!(error.index, 0);
 }

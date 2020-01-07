@@ -29,11 +29,11 @@ const TWO_MAX: u32 = (1 << 11) - 1;
 const THREE_MAX: u32 = (1 << 16) - 1;
 const FOUR_MAX: u32 = (1 << 21) - 1;
 
-const LOW_6_MASK: u32 = 0b111111;
-const NON_START_MASK: u8 = 0b10000000;
-const TWO_START_MASK: u8 = 0b11000000;
-const THREE_START_MASK: u8 = 0b11100000;
-const FOUR_START_MASK: u8 = 0b11110000;
+const LOW_6_MASK: u32 = 0b0011_1111;
+const NON_START_MASK: u8 = 0b1000_0000;
+const TWO_START_MASK: u8 = 0b1100_0000;
+const THREE_START_MASK: u8 = 0b1110_0000;
+const FOUR_START_MASK: u8 = 0b1111_0000;
 
 fn encode_char(ch: char, result: &mut Vec<u8>) -> Option<EncodeUtf8ErrorKind> {
     let raw_char = ch as u32;
